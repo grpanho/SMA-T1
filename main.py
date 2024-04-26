@@ -5,12 +5,12 @@ from Randomizer import *
 from Simulator import *
 
 def main():
-    simulacao = Simulator(0, 0)
-    YmlFila = argv[1]
-    if not YmlFila:
-        print("Nenhum arquivo de configuração foi passado como argumento.")
+    if len(argv) < 2:
+        print("Nenhuma fila foi passada como argumento.")
         exit(1)
-    simulacao.set_params(YmlFila)  # Replace 'filename.txt' with the path to your configuration file
+
+    simulacao = Simulator(0, 0)
+    simulacao.set_params(argv[1])
 
     CHEGADA = "CHEGADA"
     randomizer = Randomizer(4, simulacao.get_seed(), 240, 1000, simulacao.get_rand_numbers(), simulacao)

@@ -13,7 +13,7 @@ def main():
     simulacao.set_params(argv[1])
 
     CHEGADA = "CHEGADA"
-    randomizer = Randomizer(4, simulacao.get_seed(), 240, 1000, simulacao.get_rand_numbers(), simulacao)
+    randomizer = Randomizer(4, simulacao.get_seed(), 240, 1000, simulacao.get_maxIterations(), simulacao)
     event_list = []
 
     for queue in simulacao.queueList:

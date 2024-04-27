@@ -7,7 +7,7 @@ class Simulator:
         self.timer = timer
         self.queueList = {}
         self.losses = 0
-        self.rand_numbers = 0
+        self.maxIterations = 0
         self.seed = 21
 
     def set_params(self, queuesYaml):
@@ -30,19 +30,21 @@ class Simulator:
             self.queueList[queue].set_max_service(float(self.queueData['queues'][queue]['maxService']))
             print(f"Queue {queue} configured")
             print(self.queueList[queue])
+        self.maxIterations = int(self.queueData['maxIterations'])
     def end_n_report(self):
         print("==========================================================")
         print("=----------------------RELATORIO-------------------------=")
-        for queue, fila in self.queueList.items():
-            print(f"Fila: {queue}")
+        for queueName, fila in self.queueList.items():
+            queue = self.queueList[queueName]
+            print(f"Fila: {queueName}")
             print("Estado  Tempo       Probabilidade")
-            for i, state_time in enumerate(self.estados[queue]):
-                print(f"{i:<6d}  {state_time:<11.4f}  {(state_time * 100) / self.timer:.2f}%")
+            for state, state_time in enumerate(queue.get_states()):
+                print(f"{state:<6d}  {state_time:<11.4f}  {(state_time * 100) / self.timer:.2f}%")
             print("Numero de perdas:", self.losses)
             print("=======================================================")
 
-    def get_rand_numbers(self):
-        return self.rand_numbers
+    def get_maxIterations(self):
+        return self.maxIterations
 
     def get_seed(self):
         return self.seed

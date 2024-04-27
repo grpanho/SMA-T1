@@ -1,85 +1,45 @@
-from Queue import *
+from Queue import Queue
 from ConfigHandler import *
+import yaml
 
 class Simulator:
-    def __init__(self, timer, fila):
+    def __init__(self, timer):
         self.timer = timer
-        self.fila = fila
-        self.estados = [0.0]
+        self.queueList = {}
         self.losses = 0
         self.rand_numbers = 0
         self.seed = 21
-        self.queue = Queue()
 
-    def set_params(self, path):
-        arrivals = False
-        params = False
-        self.rand_numbers = 0
-        self.rnd_list = []
+    def set_params(self, queuesYaml):
+        with open(queuesYaml, 'r') as file:
+            self.queueData = yaml.safe_load(file)
+        
+        self.configure_queues()
 
-        for line in ConfigHandler.read_file(path):
-            if line.startswith("rndnumbersPerSeed:"):
-                self.rand_numbers = int(line.replace("rndnumbersPerSeed: ", ""))
-            if line.startswith("arrivals:"):
-                arrivals = True
-            elif arrivals:
-                if ":" in line:
-                    self.arrival_time = float(line[line.index(":") + 2:])
-                else:
-                    arrivals = False
-            if line.startswith("seed:"):
-                self.seed = int(line.replace("seed: ", ""))
-            if line.startswith("queues:"):
-                params = True
-            elif params:
-                self.configure_queue(line)
-
-    def configure_queue(self, line):
-        try:
-            value = float(line[line.index(":") + 2:])
-            if "servers:" in line:
-                self.queue.set_servers(int(value))
-            if "capacity:" in line:
-                self.queue.set_capacity(int(value))
-            if "minArrival:" in line:
-                self.queue.set_min_arrival(float(value))
-            if "maxArrival:" in line:
-                self.queue.set_max_arrival(float(value))
-            if "minService:" in line:
-                self.queue.set_min_service(float(value))
-            if "maxService:" in line:
-                self.queue.set_max_service(float(value))
-        except ValueError:
-            self.queue.set_name(line.replace(':', '').strip())
-
+    def configure_queues(self):
+        for queue in self.queueData['queues']:
+            self.queueList[queue] = Queue()  # Cria uma nova fila com o nome especificado
+            self.queueList[queue].set_name(queue)  # Define o nome da fila
+            self.queueList[queue].set_servers(int(self.queueData['queues'][queue]['servers']))
+            self.queueList[queue].set_capacity(int(self.queueData['queues'][queue]['capacity']))
+            self.queueList[queue].start_states()  # Inicializa o estado da fila
+#            self.queueList[queue].set_state(0, 0.0)  # Adiciona o tempo inicial ao estado da fila
+            self.queueList[queue].set_min_arrival(float(self.queueData['queues'][queue]['minArrival']))
+            self.queueList[queue].set_max_arrival(float(self.queueData['queues'][queue]['maxArrival']))
+            self.queueList[queue].set_min_service(float(self.queueData['queues'][queue]['minService']))
+            self.queueList[queue].set_max_service(float(self.queueData['queues'][queue]['maxService']))
+            print(f"Queue {queue} configured")
+            print(self.queueList[queue])
     def end_n_report(self):
         print("==========================================================")
         print("=----------------------RELATORIO-------------------------=")
-        print("Estado  Tempo       Probabilidade")
-
-        for i, state_time in enumerate(self.estados):
-            print(f"{i:<6d}  {state_time:<11.4f}  {(state_time * 100) / self.timer:.2f}%")
-        
-        print("Numero de perdas:", self.losses)
-        print("=======================================================")
-
-    def get_min_chegada(self):
-        return self.queue.min_arrival
-
-    def get_max_chegada(self):
-        return self.queue.max_arrival
-
-    def get_min_saida(self):
-        return self.queue.min_service
-
-    def get_max_saida(self):
-        return self.queue.max_service
-
-    def get_servidores(self):
-        return self.queue.servers
-
-    def get_max_fila(self):
-        return self.queue.capacity
+        for queue, fila in self.queueList.items():
+            print(f"Fila: {queue}")
+            print("Estado  Tempo       Probabilidade")
+            for i, state_time in enumerate(self.estados[queue]):
+                print(f"{i:<6d}  {state_time:<11.4f}  {(state_time * 100) / self.timer:.2f}%")
+            print("Numero de perdas:", self.losses)
+            print("=======================================================")
 
     def get_rand_numbers(self):
         return self.rand_numbers

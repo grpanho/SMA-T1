@@ -13,10 +13,8 @@ class Simulator:
     def set_params(self, queuesYaml):
         with open(queuesYaml, 'r') as file:
             self.queueData = yaml.safe_load(file)
-        
-        self.configure_queues()
 
-    def configure_queues(self):
+        self.maxIterations = int(self.queueData['maxIterations'])
         for queue in self.queueData['queues']:
             self.queueList[queue] = Queue()  # Cria uma nova fila com o nome especificado
             self.queueList[queue].set_name(queue)  # Define o nome da fila
@@ -30,7 +28,7 @@ class Simulator:
             self.queueList[queue].set_max_service(float(self.queueData['queues'][queue]['maxService']))
             print(f"Queue {queue} configured")
             print(self.queueList[queue])
-        self.maxIterations = int(self.queueData['maxIterations'])
+
     def end_n_report(self):
         print("==========================================================")
         print("=----------------------RELATORIO-------------------------=")

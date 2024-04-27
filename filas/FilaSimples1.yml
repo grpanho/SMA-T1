@@ -1,22 +1,14 @@
 maxIterations: 100000
-seed: 7
+seed: 12
 
 arrivals:
    Q1: 3.0
-   Q2: 4.0
 
 queues: 
    Q1:
-      servers: 2
+      servers: 1
       capacity: 5
       minArrival: 1.0
       maxArrival: 3.0
       minService: 2.0
       maxService: 4.0
-   Q2:
-      servers: 1
-      capacity: 3
-      minArrival: 2.0
-      maxArrival: 5.0
-      minService: 1.5
-      maxService: 3.5

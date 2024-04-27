@@ -33,35 +33,34 @@ class Randomizer:
     def range(self, a, b):
         return (b - a) * self.rand() + a
 
-def saida(queue, event, simulacao, randomizador, event_list):
+    def saida(self, queue, event, simulacao, event_list):
 
-    print(queue.get_states())
-    print(queue.get_clients())
+        print(queue.get_states())
+        print(queue.get_clients())
 
-    queue.set_state(queue.get_clients(), (event.arrival_time - simulacao.timer))
-    simulacao.timer = event.arrival_time
-    queue.set_clients(queue.get_clients() - 1)
+        queue.set_state(queue.get_clients(), (event.arrival_time - simulacao.timer))
+        simulacao.timer = event.arrival_time
+        queue.set_clients(queue.get_clients() - 1)
 
-    if queue.get_clients() >= queue.get_servers():
-        agend_saida(randomizador.range(queue.get_min_service(), queue.get_max_service()), simulacao, event_list)
+        if queue.get_clients() >= queue.get_servers():
+            self.agend_saida(self.range(queue.get_min_service(), queue.get_max_service()), simulacao, event_list)
 
-def chegada(queue, event, simulacao, randomizador, event_list):
-    queue.set_state(queue.get_clients(), (event.arrival_time - simulacao.timer))
+    def chegada(self, queue, event, simulacao, event_list):
+        queue.set_state(queue.get_clients(), (event.arrival_time - simulacao.timer))
+        simulacao.timer = event.arrival_time
 
-    simulacao.timer = event.arrival_time
+        if queue.get_clients() < queue.get_capacity():
+            queue.set_clients(queue.get_clients() + 1)
 
-    if queue.get_clients() < queue.get_capacity():
-        queue.set_clients(queue.get_clients() + 1)
+            if queue.get_clients() <= queue.get_servers():
+                self.agend_saida(self.range(queue.get_min_service(), queue.get_max_service()), simulacao, event_list)
+        else:
+            simulacao.losses += 1
 
-        if queue.get_clients() <= queue.get_servers():
-            agend_saida(randomizador.range(queue.get_min_service(), queue.get_max_service()), simulacao, event_list)
-    else:
-        simulacao.losses += 1
+        self.agend_chegada(self.range(queue.get_min_arrival(), queue.get_max_arrival()), simulacao, event_list)
 
-    agend_chegada(randomizador.range(queue.get_min_arrival(), queue.get_max_arrival()), simulacao, event_list)
+    def agend_saida(self, range_val, simulacao, event_list):
+        heapq.heappush(event_list, Event("SAIDA", range_val, simulacao.timer))
 
-def agend_saida(range_val, simulacao, event_list):
-    heapq.heappush(event_list, Event("SAIDA", range_val, simulacao.timer))
-
-def agend_chegada(range_val, simulacao, event_list):
-    heapq.heappush(event_list, Event("CHEGADA", range_val, simulacao.timer))
+    def agend_chegada(self, range_val, simulacao, event_list):
+        heapq.heappush(event_list, Event("CHEGADA", range_val, simulacao.timer))

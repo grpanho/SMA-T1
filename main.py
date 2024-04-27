@@ -23,13 +23,15 @@ def main():
 
     while event_list:
         event = heapq.heappop(event_list)
+        print(event.arrival_time, event.event_type) 
+        #input()
 
         for queueName in simulacao.queueList:
             queue = simulacao.queueList[queueName]
             if event.event_type == CHEGADA:
-                chegada(queue, event, simulacao, randomizer, event_list)
+                randomizer.chegada(queue, event, simulacao, event_list)
             else:
-                saida(queue, event, simulacao, randomizer, event_list)
+                randomizer.saida(queue, event, simulacao, event_list)
 
 if __name__ == "__main__":
     main()

@@ -26,8 +26,6 @@ class Simulator:
             self.queueList[queue].set_max_arrival(float(self.queueData['queues'][queue]['maxArrival']))
             self.queueList[queue].set_min_service(float(self.queueData['queues'][queue]['minService']))
             self.queueList[queue].set_max_service(float(self.queueData['queues'][queue]['maxService']))
-            print(f"Queue {queue} configured")
-            print(self.queueList[queue])
 
     def end_n_report(self):
         print("==========================================================")

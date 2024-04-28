@@ -34,10 +34,6 @@ class Randomizer:
         return (b - a) * self.rand() + a
 
     def saida(self, queue, event, simulacao, event_list):
-
-        print(queue.get_states())
-        print(queue.get_clients())
-
         queue.set_state(queue.get_clients(), (event.arrival_time - simulacao.timer))
         simulacao.timer = event.arrival_time
         queue.set_clients(queue.get_clients() - 1)

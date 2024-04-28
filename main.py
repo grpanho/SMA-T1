@@ -23,8 +23,6 @@ def main():
 
     while event_list:
         event = heapq.heappop(event_list)
-        print(event.arrival_time, event.event_type) 
-        #input()
 
         for queueName in simulacao.queueList:
             queue = simulacao.queueList[queueName]

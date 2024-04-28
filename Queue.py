@@ -26,7 +26,7 @@ class Queue:
         self.states = [0] * (self.capacity + 1)
 
     def set_state(self, state, time):
-        self.states[state] = time
+        self.states[state] += time
 
     def set_clients(self, clients):
         if clients < 0:

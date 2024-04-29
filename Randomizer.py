@@ -13,10 +13,6 @@ class Randomizer:
         self.list_mode = False
         self.rnd_list = []
 
-    def set_list_mode(self, rnd_list):
-        self.list_mode = True
-        self.rnd_list = rnd_list
-
     def rand(self):
         if self.count == self.max_rand_num - 1:
             self.simulator.end_n_report()
@@ -42,6 +38,7 @@ class Randomizer:
             self.agend_saida(self.range(queue.get_min_service(), queue.get_max_service()), simulacao, event_list)
 
     def chegada(self, queue, event, simulacao, event_list):
+        print(queue.get_clients(), queue.get_capacity(), queue.get_states())
         queue.set_state(queue.get_clients(), (event.arrival_time - simulacao.timer))
         simulacao.timer = event.arrival_time
 
@@ -55,8 +52,8 @@ class Randomizer:
 
         self.agend_chegada(self.range(queue.get_min_arrival(), queue.get_max_arrival()), simulacao, event_list)
 
-    def agend_saida(self, range_val, simulacao, event_list):
+    def agend_saida(self, queue, range_val, simulacao, event_list):
         heapq.heappush(event_list, Event("SAIDA", range_val, simulacao.timer))
 
-    def agend_chegada(self, range_val, simulacao, event_list):
+    def agend_chegada(self, queue, range_val, simulacao, event_list):
         heapq.heappush(event_list, Event("CHEGADA", range_val, simulacao.timer))

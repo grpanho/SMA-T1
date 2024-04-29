@@ -9,15 +9,15 @@ def main():
         print("Nenhuma fila foi passada como argumento.")
         exit(1)
 
-    simulacao = Simulator(0)
-    simulacao.set_params(argv[1])
+    simulacao = Simulator()
+    simulacao.set_queues(argv[1])
 
     CHEGADA = "CHEGADA"
     randomizer = Randomizer(4, simulacao.get_seed(), 240, 1000, simulacao.get_maxIterations(), simulacao)
     event_list = []
 
-    for queue in simulacao.queueList:
-        simulacao.queueList[queue].set_state(0, 0.0)
+#    for queue in simulacao.queueList:
+#        simulacao.queueList[queue].set_state(0, 0.0)
 
     heapq.heappush(event_list, Event(CHEGADA, 0, simulacao.timer))
 

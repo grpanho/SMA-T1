@@ -1,16 +1,15 @@
 from Queue import Queue
-from ConfigHandler import *
 import yaml
 
 class Simulator:
-    def __init__(self, timer):
-        self.timer = timer
+    def __init__(self):
+        self.timer = 0
         self.queueList = {}
         self.losses = 0
         self.maxIterations = 0
         self.seed = 21
 
-    def set_params(self, queuesYaml):
+    def set_queues(self, queuesYaml):
         with open(queuesYaml, 'r') as file:
             self.queueData = yaml.safe_load(file)
 
@@ -20,12 +19,15 @@ class Simulator:
             self.queueList[queue].set_name(queue)  # Define o nome da fila
             self.queueList[queue].set_servers(int(self.queueData['queues'][queue]['servers']))
             self.queueList[queue].set_capacity(int(self.queueData['queues'][queue]['capacity']))
-            self.queueList[queue].start_states()  # Inicializa o estado da fila
+#            self.queueList[queue].start_states()  # Inicializa o estado da fila
 #            self.queueList[queue].set_state(0, 0.0)  # Adiciona o tempo inicial ao estado da fila
-            self.queueList[queue].set_min_arrival(float(self.queueData['queues'][queue]['minArrival']))
-            self.queueList[queue].set_max_arrival(float(self.queueData['queues'][queue]['maxArrival']))
+            if "minArrival" in self.queueData['queues'][queue] and "maxArrival" in self.queueData['queues'][queue]:
+                self.queueList[queue].set_min_arrival(float(self.queueData['queues'][queue]['minArrival']))
+                self.queueList[queue].set_max_arrival(float(self.queueData['queues'][queue]['maxArrival']))
             self.queueList[queue].set_min_service(float(self.queueData['queues'][queue]['minService']))
             self.queueList[queue].set_max_service(float(self.queueData['queues'][queue]['maxService']))
+            for destQueue in self.queueData['queues'][queue]['output']:
+                self.queueList[queue].set_output(destQueue, float(self.queueData['queues'][queue]["output"][destQueue]))
 
     def end_n_report(self):
         print("==========================================================")

@@ -9,27 +9,24 @@ def main():
         print("Nenhuma fila foi passada como argumento.")
         exit(1)
 
-    simulacao = Simulator()
-    simulacao.set_queues(argv[1])
-
-    CHEGADA = "CHEGADA"
+    simulacao  = Simulator()
     randomizer = Randomizer(4, simulacao.get_seed(), 240, 1000, simulacao.get_maxIterations(), simulacao)
+    randomizer.set_queues(argv[1])
     event_list = []
 
-#    for queue in simulacao.queueList:
-#        simulacao.queueList[queue].set_state(0, 0.0)
-
-    heapq.heappush(event_list, Event(CHEGADA, 0, simulacao.timer))
+    heapq.heappush(event_list, Event("CHEGADA", 0, simulacao.timer, "Q1"))
 
     while event_list:
         event = heapq.heappop(event_list)
+        print(simulacao.timer, event.event_type, event.arrival_time)
+        input()
 
-        for queueName in simulacao.queueList:
-            queue = simulacao.queueList[queueName]
-            if event.event_type == CHEGADA:
-                randomizer.chegada(queue, event, simulacao, event_list)
-            else:
-                randomizer.saida(queue, event, simulacao, event_list)
+        if event.event_type == "CHEGADA":
+            randomizer.chegada(event, event_list)
+        elif event.event_type == "TRANSICAO":
+            randomizer.transicao(event, event_list)
+        else:
+            randomizer.saida(event, event_list)
 
 if __name__ == "__main__":
     main()

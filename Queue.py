@@ -89,5 +89,26 @@ class Queue:
     def get_output(self):
         return self.output
 
+    def calculate_output(self, rand):
+        if self.output == {}:
+            return None
+        currProb = 0
+        for destQueue in self.output:
+            currProb += self.output[destQueue]
+            if rand <= currProb:
+                return destQueue
+#        if (pipes.isEmpty())
+#            return null;
+#        final double r = gen.nextRand();
+#        double currProb = 0;
+#        for (Pipe p : pipes) {
+#            currProb += p.probability;
+#            if (r <= currProb) {
+#                return p.f;
+#            }
+#        }
+#        return null;
+
+
     def printQ(self):
         return f"Name: {self.name}\n Servers: {self.servers}\n Capacity: {self.capacity}\n States: {self.states}\n Clients: {self.clients}\n Min Arrival: {self.min_arrival}\n Max Arrival: {self.max_arrival}\n Min Service: {self.min_service}\n Max Service: {self.max_service}\n Output: {self.output}"

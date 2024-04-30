@@ -1,4 +1,4 @@
-maxIterations: 100000
+maxRndNumbers: 100000
 seed: 21
 
 arrivals:
@@ -7,7 +7,7 @@ arrivals:
 queues: 
    Q1:
       servers: 1
-      capacity: 5 #INFINITE
+      capacity: INFINITE
       minArrival: 2.0
       maxArrival: 4.0
       minService: 1.0
@@ -27,8 +27,8 @@ queues:
          Q2: 0.5
          OUT: 0.2
    Q3:
-      servers: 1
-      capacity: 4
+      servers: 2
+      capacity: 10
       #minArrival: -1
       #maxArrival: -1
       minService: 5.0

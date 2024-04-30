@@ -1,6 +1,6 @@
 class Queue:
-    def __init__(self):
-        self.name = ""
+    def __init__(self, name: str):
+        self.name = name
         self.servers = 0
         self.capacity = 0
         self.states = {}
@@ -20,12 +20,6 @@ class Queue:
 
     def set_capacity(self, capacity):
         self.capacity = capacity
-    
-#    def start_states(self):
-#        if self.capacity == 0:
-#            print("Capacity must be greater than 0")
-#            exit(1)
-#        self.states = [0] * (self.capacity + 1)
 
     def set_state(self, state, time):
         if state not in self.states:
@@ -91,24 +85,12 @@ class Queue:
 
     def calculate_output(self, rand):
         if self.output == {}:
-            return None
+            return "OUT"
         currProb = 0
         for destQueue in self.output:
             currProb += self.output[destQueue]
             if rand <= currProb:
                 return destQueue
-#        if (pipes.isEmpty())
-#            return null;
-#        final double r = gen.nextRand();
-#        double currProb = 0;
-#        for (Pipe p : pipes) {
-#            currProb += p.probability;
-#            if (r <= currProb) {
-#                return p.f;
-#            }
-#        }
-#        return null;
-
 
     def printQ(self):
         return f"Name: {self.name}\n Servers: {self.servers}\n Capacity: {self.capacity}\n States: {self.states}\n Clients: {self.clients}\n Min Arrival: {self.min_arrival}\n Max Arrival: {self.max_arrival}\n Min Service: {self.min_service}\n Max Service: {self.max_service}\n Output: {self.output}"

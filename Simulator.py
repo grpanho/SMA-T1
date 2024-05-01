@@ -1,88 +1,42 @@
-from Queue import *
-from ConfigHandler import *
+import heapq
+from sys import argv
+from Event import *
+from Scheduler import *
+from Simulator import *
 
-class Simulator:
-    def __init__(self, timer, fila):
-        self.timer = timer
-        self.fila = fila
-        self.estados = [0.0]
-        self.losses = 0
-        self.rand_numbers = 0
-        self.seed = 21
-        self.queue = Queue()
+def simulate():
+    if len(argv) < 2:
+        print("Nenhuma fila foi passada como argumento.")
+        exit(1)
 
-    def set_params(self, path):
-        arrivals = False
-        params = False
-        self.rand_numbers = 0
-        self.rnd_list = []
+    scheduler = Scheduler()
+    scheduler.set_yaml_data(argv[1])
 
-        for line in ConfigHandler.read_file(path):
-            if line.startswith("rndnumbersPerSeed:"):
-                self.rand_numbers = int(line.replace("rndnumbersPerSeed: ", ""))
-            if line.startswith("arrivals:"):
-                arrivals = True
-            elif arrivals:
-                if ":" in line:
-                    self.arrival_time = float(line[line.index(":") + 2:])
-                else:
-                    arrivals = False
-            if line.startswith("seed:"):
-                self.seed = int(line.replace("seed: ", ""))
-            if line.startswith("queues:"):
-                params = True
-            elif params:
-                self.configure_queue(line)
+    Q1 = scheduler.queueList["Q1"]
+    scheduler.agenda_evento(Event("CHEGADA", 2.0, Q1))
 
-    def configure_queue(self, line):
-        try:
-            value = float(line[line.index(":") + 2:])
-            if "servers:" in line:
-                self.queue.set_servers(int(value))
-            if "capacity:" in line:
-                self.queue.set_capacity(int(value))
-            if "minArrival:" in line:
-                self.queue.set_min_arrival(float(value))
-            if "maxArrival:" in line:
-                self.queue.set_max_arrival(float(value))
-            if "minService:" in line:
-                self.queue.set_min_service(float(value))
-            if "maxService:" in line:
-                self.queue.set_max_service(float(value))
-        except ValueError:
-            self.queue.set_name(line.replace(':', '').strip())
+    while not scheduler.end():
+        event = scheduler.pop_event()
 
-    def end_n_report(self):
-        print("==========================================================")
-        print("=----------------------RELATORIO-------------------------=")
-        print("Estado  Tempo       Probabilidade")
-
-        for i, state_time in enumerate(self.estados):
-            print(f"{i:<6d}  {state_time:<11.4f}  {(state_time * 100) / self.timer:.2f}%")
+        for queue in scheduler.queueList.values():
+            queue.set_state(queue.get_clients(), (event.get_event_time() - scheduler.get_timer()))
         
-        print("Numero de perdas:", self.losses)
-        print("=======================================================")
+        scheduler.set_timer(event.get_event_time())
 
-    def get_min_chegada(self):
-        return self.queue.min_arrival
+        if event.destQueue != None:
+            print(scheduler.timer, event.event_type, event.event_time, event.get_originQueue().get_name(),event.destQueue.get_name())
+        else:
+            print(scheduler.timer, event.event_type, event.event_time, event.get_originQueue().get_name())
+        #input()
 
-    def get_max_chegada(self):
-        return self.queue.max_arrival
+        if event.event_type == "CHEGADA":
+            scheduler.chegada(event)
+        elif event.event_type == "TRANSICAO":
+            scheduler.transicao(event)
+        else:
+            scheduler.saida(event)
 
-    def get_min_saida(self):
-        return self.queue.min_service
+    scheduler.report()
 
-    def get_max_saida(self):
-        return self.queue.max_service
-
-    def get_servidores(self):
-        return self.queue.servers
-
-    def get_max_fila(self):
-        return self.queue.capacity
-
-    def get_rand_numbers(self):
-        return self.rand_numbers
-
-    def get_seed(self):
-        return self.seed
+if __name__ == "__main__":
+    simulate()

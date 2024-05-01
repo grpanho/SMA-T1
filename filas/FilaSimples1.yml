@@ -1,6 +1,4 @@
-!PARAMETERS
-
-rndnumbersPerSeed: 100000
+maxIterations: 100000
 seed: 12
 
 arrivals:

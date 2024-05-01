@@ -1,0 +1,57 @@
+maxRndNumbers: 100000
+seed: 21
+
+arrivals:
+   Q1: 2.0
+
+queues: 
+   Q1:
+      servers: 1
+      capacity: INFINITE
+      minArrival: 2.0
+      maxArrival: 4.0
+      minService: 1.0
+      maxService: 2.0
+      output:
+        Q2: 0.8
+        Q3: 0.2
+   Q2:
+      servers: 2
+      capacity: 5
+      #minArrival: NULL
+      #maxArrival: NULL
+      minService: 4.0
+      maxService: 8.0
+      output:
+         Q1: 0.3
+         Q2: 0.5
+         OUT: 0.2
+   Q3:
+      servers: 2
+      capacity: 10
+      #minArrival: -1
+      #maxArrival: -1
+      minService: 5.0
+      maxService: 15.0
+      output:
+        Q3: 0.7
+        OUT: 0.3
+
+listMode: False
+rndNumbers: 
+- 0.2176
+- 0.0103
+- 0.1109
+- 0.3456
+- 0.9910
+- 0.2323
+- 0.9211
+- 0.0322
+- 0.1211
+- 0.5131
+- 0.7208
+- 0.9172
+- 0.9922
+- 0.8324
+- 0.5011
+- 0.2931

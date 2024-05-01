@@ -1,6 +1,6 @@
 from Queue import Queue
 class Event:
-    def __init__(self, event_type, event_time, originQueue, destQueue = None):
+    def __init__(self, event_type, event_time, originQueue = None, destQueue = None):
         self.event_time = event_time
         self.event_type = event_type
         self.originQueue = originQueue

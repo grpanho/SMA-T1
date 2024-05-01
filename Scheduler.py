@@ -85,18 +85,16 @@ class Scheduler:
             eventTime = self.pseudoRandom.range(originQueue.get_min_service(), originQueue.get_max_service()) + self.timer
             if dest != "OUT":
                 event = Event("TRANSICAO", eventTime, originQueue, self.queueList[dest])
-                #event = Event("CHEGADA", eventTime, self.queueList[dest])
-                #event = Event("SAIDA", eventTime, originQueue)
                 self.agenda_evento(event)
             else:
                 event = Event("SAIDA", eventTime, originQueue)
                 self.agenda_evento(event)
 
-            destQueue.set_clients(destQueue.get_clients() + 1)
-            if destQueue.get_clients() <= destQueue.get_servers():
-                eventTime = self.pseudoRandom.range(originQueue.get_min_service(), originQueue.get_max_service()) + self.timer
-                event = Event("SAIDA", eventTime, destQueue)
-                self.agenda_evento(event)
+        destQueue.set_clients(destQueue.get_clients() + 1)
+        if destQueue.get_clients() <= destQueue.get_servers():
+            eventTime = self.pseudoRandom.range(originQueue.get_min_service(), originQueue.get_max_service()) + self.timer
+            event = Event("SAIDA", eventTime, destQueue)
+            self.agenda_evento(event)
         self.maxRndNumbers -= 1
 
     def agenda_evento(self, event):

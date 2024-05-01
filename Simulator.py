@@ -11,24 +11,30 @@ def simulate():
 
     scheduler = Scheduler()
     scheduler.set_yaml_data(argv[1])
-    count = 0
 
     Q1 = scheduler.queueList["Q1"]
-    scheduler.agenda_evento(Event("CHEGADA", 0, Q1))
+    scheduler.agenda_evento(Event("CHEGADA", 2.0, Q1))
 
-    while scheduler.get_maxRndNumbers() != 0:
-        nextEvent = scheduler.pop_event()
-        print(scheduler.timer, nextEvent.event_type, nextEvent.arrival_time, nextEvent.get_originQueue().get_name())
+    while not scheduler.end():
+        event = scheduler.pop_event()
+
+        for queue in scheduler.queueList.values():
+            queue.set_state(queue.get_clients(), (event.get_event_time() - scheduler.get_timer()))
+        
+        scheduler.set_timer(event.get_event_time())
+
+        if event.destQueue != None:
+            print(scheduler.timer, event.event_type, event.event_time, event.get_originQueue().get_name(),event.destQueue.get_name())
+        else:
+            print(scheduler.timer, event.event_type, event.event_time, event.get_originQueue().get_name())
         #input()
 
-        if nextEvent.event_type == "CHEGADA":
-            scheduler.chegada(nextEvent)
-        elif nextEvent.event_type == "TRANSICAO":
-            scheduler.transicao(nextEvent)
+        if event.event_type == "CHEGADA":
+            scheduler.chegada(event)
+        elif event.event_type == "TRANSICAO":
+            scheduler.transicao(event)
         else:
-            scheduler.saida(nextEvent)
-        
-        count += 1
+            scheduler.saida(event)
 
     scheduler.report()
 
